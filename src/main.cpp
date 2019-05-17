@@ -6,7 +6,6 @@
 
 #include "pcl/io/pcd_io.h"
 #include "pcl/point_types.h"
-#include "pcl/common/centroid.h"
 #include "pcl/common/io.h"
 #include "pcl/search/search.h"
 #include "pcl/search/kdtree.h"
@@ -35,17 +34,14 @@ int main(int argc, char** argv)
         return -1;
     }
 
+    std::cout << "\nReading point cloud file..." << std::endl;
+
     // print basic stats on point cloud file
     std::cout << "\nPoint Cloud Data Loaded";
     std::cout << "\nWidth: " << cloud->width;
     std::cout << "\nHeight: " << cloud->height;
     std::cout << "\nTotal Number of Points: " << cloud->width * cloud->height;
     std::cout << std::endl;
-
-    // compute point cloud centroid
-    Eigen::Vector4f centroid;
-    pcl::compute3DCentroid(*cloud, centroid);
-    std::cout << "Centroid at: (" << centroid[0] << ", " << centroid[1] << ", " << centroid[2] << ")" << std::endl;
 
     // create new point cloud from the RGB vegetation indices
     std::cout << "Calculating Vegetation Indices" << std::endl;;
