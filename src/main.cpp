@@ -23,7 +23,7 @@
 #include "pre_processing/preprocessor.h"
 #include "segmentation/segmenter.h"
 
-const std::string FILE_PATH { "../../data/odm_georeferenced_model.pcd" };
+const std::string FILE_PATH { "../../data/jacobs_campus.pcd" };
 const std::string SEGMENT_CLOUD_FILE_PATH { "../../data/segmented_cloud.pcd" };
 
 int main(int argc, char** argv)
@@ -59,17 +59,17 @@ int main(int argc, char** argv)
     pcl::PointCloud<PointDefaultType>::Ptr segmentedCloud(new pcl::PointCloud<PointDefaultType>);
     std::cout << "Segmenting Point Cloud" << std::endl;
     segmenter.SegementPointCloudByColor(result, result);
-    //segmenter.SegmentVegetationIndexedCloud(vegetationIndiceCloud, segmentedCloud);
 
+    // Write the segmented cloud to disk
+    std::cout << "\nWriting segmented cloud to disk...";
+    pcl::io::savePCDFile(SEGMENT_CLOUD_FILE_PATH, *result);
+    std::cout << "\nSegmented cloud written to disk";
+    std::cout.flush();
 
     // visualize the resultant cloud
-    std::cout << "Visualising Result Point Cloud" << std::endl;
+    std::cout << "\n\nVisualising Result Point Cloud" << std::endl;
     PointCloudRenderer renderer(result);
     renderer.Render();
 
     return 0;
 }
-
-// Segment the point cloud and write to file path
-// Refer to: http://pointclouds.org/documentation/tutorials/region_growing_rgb_segmentation.php#region-growing-rgb-segmentation
-
