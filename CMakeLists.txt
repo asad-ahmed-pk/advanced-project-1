@@ -22,7 +22,18 @@ list(APPEND PROJECT_SOURCES
         src/segmentation/segmenter.cpp
         src/classification/classifier.cpp
         src/pre_processing/preprocessor.cpp
+        src/io/lasreader.cpp
 )
 
+# dependency - libLAS
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+add_subdirectory(libs/libLAS)
+set(LIBLAS_LIB_PATH_MAC "${LIBLAS_BUILD_OUTPUT_DIRECTORY}/liblas.dylib" "${LIBLAS_BUILD_OUTPUT_DIRECTORY}/liblas_c.dylib")
+set(LIBLAS_LIB_PATH_LINUX "${LIBLAS_BUILD_OUTPUT_DIRECTORY}/liblas.so" "${LIBLAS_BUILD_OUTPUT_DIRECTORY}/liblas_c.so")
+
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCES})
-target_link_libraries(${PROJECT_NAME} ${PCL_LIBRARIES} Eigen3::Eigen)
+if(APPLE)
+    target_link_libraries(${PROJECT_NAME} ${PCL_LIBRARIES} Eigen3::Eigen ${LIBLAS_LIB_PATH_MAC})
+else()
+    target_link_libraries(${PROJECT_NAME} ${PCL_LIBRARIES} Eigen3::Eigen ${LIBLAS_LIB_PATH_LINUX})
+endif()
