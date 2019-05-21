@@ -48,6 +48,8 @@ bool LASReader::ReadLASPointCloud(const std::string &lasFilePath)
         std::cout << "\nThread " << threads[i].get_id() << " starting";
     }
 
+    std::cout << std::endl;
+
     // wait for threads to finish processing the file
     std::chrono::time_point<std::chrono::high_resolution_clock> start = std::chrono::high_resolution_clock::now();
 
@@ -68,8 +70,6 @@ bool LASReader::ReadLASPointCloud(const std::string &lasFilePath)
 // Thread reading task
 void LASReader::ProcessFileTask(unsigned long start, unsigned long end, const char* filePath)
 {
-    //std::cout << "\nThread " << std::this_thread::get_id() << " starting file read task" << std::endl;
-
     std::ifstream is { filePath };
     if (is.fail()) {
         std::cerr << "\nERROR: LAS reader thread failed to launch." << std::endl;
@@ -91,12 +91,6 @@ void LASReader::ProcessFileTask(unsigned long start, unsigned long end, const ch
 
         index = start + readCount;
         m_PointCloud->points[index] = point;
-
-        /*
-        m_Mutex.lock();
-        m_PointCloud->push_back(point);
-        m_Mutex.unlock();
-        */
 
         readCount++;
     }
