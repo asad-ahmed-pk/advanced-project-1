@@ -90,7 +90,10 @@ void LASReader::ProcessFileTask(unsigned long start, unsigned long end, const ch
         ConvertToPCDPoint(reader.GetPoint(), point);
 
         index = start + readCount;
+
+        m_Mutex.lock();
         m_PointCloud->points[index] = point;
+        m_Mutex.unlock();
 
         readCount++;
     }
