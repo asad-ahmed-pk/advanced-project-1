@@ -4,6 +4,7 @@
 #include <thread>
 #include <cmath>
 #include <vector>
+#include <chrono>
 
 #include "lasreader.h"
 #include "liblas/liblas.hpp"
@@ -32,26 +33,33 @@ bool LASReader::ReadLASPointCloud(const std::string &lasFilePath)
     is.close();
     std::cout << "\nNumber of points in LAS file: " << pointCount << std::endl;
 
+    // setup point cloud to have the required number of points
+    m_PointCloud->resize(pointCount);
+
     // create required number of threads and assign each its range to process
     std::vector<std::thread> threads;
     unsigned long int pointsPerThread = pointCount / static_cast<unsigned long int>(m_NumberOfThreads);
 
     // setup threads
-    for (int i = 0; i < m_NumberOfThreads; i++)
-    {
+    for (int i = 0; i < m_NumberOfThreads; i++) {
         unsigned long int start = (static_cast<unsigned long int>(i) * pointsPerThread);
         unsigned long int end = start + pointsPerThread;
-        //std::thread t([=] { this->ProcessFileTask(start, end, lasFilePath.c_str());});
-        threads.emplace_back(std::thread([=] { this->ProcessFileTask(start, end, lasFilePath.c_str());}));
-        //threads[i].detach();
-        //std::thread t(&LASReader::ProcessFileTask, this, start, end, lasFilePath.c_str(), pc);
+        threads.emplace_back(std::thread([=] { this->ProcessFileTask(start, end, lasFilePath.c_str()); }));
+        std::cout << "\nThread " << threads[i].get_id() << " starting";
     }
+
+    // wait for threads to finish processing the file
+    std::chrono::time_point<std::chrono::high_resolution_clock> start = std::chrono::high_resolution_clock::now();
 
     for (size_t i = 0; i < threads.size(); i++) {
         threads[i].join();
     }
 
-    std::cout << "\nAll LAS reader threads finished reading the file.\n";
+    std::chrono::time_point<std::chrono::high_resolution_clock> end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> elapsed = end - start;
+
+    std::cout << "\n\nAll LAS reader threads finished reading the file.\n";
+    std::cout << "\nTotal Time: " << elapsed.count() << std::endl;
     std::cout.flush();
 
     return true;
@@ -72,15 +80,23 @@ void LASReader::ProcessFileTask(unsigned long start, unsigned long end, const ch
     liblas::Reader reader = rf.CreateWithStream(is);
 
     reader.Seek(start);
+
     unsigned long int readCount = 0;
+    unsigned long int index = 0;
+
     while (reader.ReadNextPoint() && (readCount < (start + end)))
     {
         pcl::PointXYZRGB point;
         ConvertToPCDPoint(reader.GetPoint(), point);
 
+        index = start + readCount;
+        m_PointCloud->points[index] = point;
+
+        /*
         m_Mutex.lock();
         m_PointCloud->push_back(point);
         m_Mutex.unlock();
+        */
 
         readCount++;
     }
