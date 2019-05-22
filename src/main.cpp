@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <string>
+#include <chrono>
 
 #include "pcl/io/pcd_io.h"
 #include "pcl/point_types.h"
@@ -28,6 +29,9 @@ const std::string SEGMENT_CLOUD_FILE_PATH { "../../data/segmented_cloud.pcd" };
 
 int main(int argc, char** argv)
 {
+    // begin recording execution time
+    std::chrono::high_resolution_clock::time_point startTime = std::chrono::high_resolution_clock::now();
+
     // check for params
     if (argc < 2) {
         std::cerr << "\nUsage: PointCloudTreeClassifier [input point cloud pcd file] [optional: number of threads for reading las file]\n";
@@ -85,9 +89,19 @@ int main(int argc, char** argv)
     std::cout.flush();
 
     // visualize the resultant cloud
+    /*
     std::cout << "\n\nVisualising Result Point Cloud" << std::endl;
     PointCloudRenderer renderer(cloud);
     renderer.Render();
+    */
+
+    // record end execution time and elapsed time
+    std::chrono::high_resolution_clock::time_point endTime = std::chrono::high_resolution_clock::now();
+
+    std::cout << "\n\nProcessing " << inputPointCloudFilePath << " complete" << std::endl;
+    std::cout << "Final point cloud written to: " << SEGMENT_CLOUD_FILE_PATH << std::endl;
+    std::cout << "\n\nTotal Processing Time: " << std::chrono::duration_cast<std::chrono::minutes>(endTime - startTime).count() << " minutes" << std::endl;
+    std::cout << std::endl;
 
     return 0;
 }
