@@ -67,25 +67,22 @@ int main(int argc, char** argv)
     std::cout << std::endl;
 
     // create new point cloud from the RGB vegetation indices
-    /*
     std::cout << "Calculating Vegetation Indices" << std::endl;;
-    //pcl::PointCloud<pcl::PointXYZI>::Ptr vegetationIndiceCloud(new pcl::PointCloud<pcl::PointXYZI>);
-    pcl::PointCloud<PointDefaultType>::Ptr result(new pcl::PointCloud<PointDefaultType>);
+    //pcl::PointCloud<PointDefaultType>::Ptr result(new pcl::PointCloud<PointDefaultType>);
     Preprocessor preprocessor;
-    preprocessor.ProcessPointCloud(cloud, VegetationIndex::TGI, result);
+    preprocessor.ProcessPointCloud(cloud, VegetationIndex::TGI, cloud);
 
     // segment the cloud
     Segmenter segmenter;
     pcl::PointCloud<PointDefaultType>::Ptr segmentedCloud(new pcl::PointCloud<PointDefaultType>);
     std::cout << "Segmenting Point Cloud" << std::endl;
-    segmenter.SegementPointCloudByColor(result, result);
+    segmenter.SegementPointCloudByColor(cloud, cloud);
 
     // Write the segmented cloud to disk
     std::cout << "\nWriting segmented cloud to disk...";
-    pcl::io::savePCDFile(SEGMENT_CLOUD_FILE_PATH, *result);
+    pcl::io::savePCDFile(SEGMENT_CLOUD_FILE_PATH, *cloud);
     std::cout << "\nSegmented cloud written to disk";
     std::cout.flush();
-    */
 
     // visualize the resultant cloud
     std::cout << "\n\nVisualising Result Point Cloud" << std::endl;
