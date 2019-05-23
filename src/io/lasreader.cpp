@@ -63,7 +63,7 @@ bool LASReader::ReadLASPointCloud(const std::string &lasFilePath)
     std::chrono::duration<double> elapsed = end - start;
 
     std::cout << "\n\nAll LAS reader threads finished reading the file.\n";
-    std::cout << "\nTotal Time: " << std::chrono::duration_cast<std::chrono::minutes>(elapsed).count() << " minutes" std::endl;
+    std::cout << "\nTotal Time: " << std::chrono::duration_cast<std::chrono::minutes>(elapsed).count() << " minutes" << std::endl;
     std::cout.flush();
 
     return true;
