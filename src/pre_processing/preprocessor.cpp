@@ -13,6 +13,10 @@
 #include <map>
 #include <numeric>
 
+// TGI threshold values to filter out vegetation
+float Preprocessor::TGI_THRESHOLD_VALUE_MIN = 30.0f;
+float Preprocessor::TGI_THRESHOLD_VALUE_MAX = 100.0f;
+
 Preprocessor::Preprocessor()
 {
 
@@ -85,10 +89,6 @@ void Preprocessor::ProcessPointCloud(const pcl::PointCloud<PointDefaultType>::Pt
 // Filter out non vegetation. This will be based on the intensity values and the vegetation index used.
 void Preprocessor::FilterOutNonVegetation(pcl::PointCloud<pcl::PointXYZI>::Ptr &cloud, VegetationIndex indexType, std::vector<uint32_t>& removedIndices) const
 {
-    // thresholding values for each of the indices
-    const float TGI_THRESHOLD_VALUE_MIN { 30.0f };
-    const float TGI_THRESHOLD_VALUE_MAX { 100.0f };
-
     // height filter
     const float HEIGHT_FILTER_VALUE_MIN { 10.0f };
     const float HEIGHT_FILTER_VALUE_MAX { 100.0f };
@@ -99,7 +99,7 @@ void Preprocessor::FilterOutNonVegetation(pcl::PointCloud<pcl::PointXYZI>::Ptr &
     pass.setFilterFieldName("intensity");
 
     if (indexType == VegetationIndex::TGI) {
-        pass.setFilterLimits(TGI_THRESHOLD_VALUE_MIN, TGI_THRESHOLD_VALUE_MAX);
+        pass.setFilterLimits(Preprocessor::TGI_THRESHOLD_VALUE_MIN, Preprocessor::TGI_THRESHOLD_VALUE_MAX);
     }
     else {
         std::cerr << "\nError: Only TGI filtering supported!" << std::endl;
@@ -119,6 +119,15 @@ void Preprocessor::FilterOutNonVegetation(pcl::PointCloud<pcl::PointXYZI>::Ptr &
     heightPass.setFilterFieldName("z");
     heightPass.setFilterLimits(HEIGHT_FILTER_VALUE_MIN, HEIGHT_FILTER_VALUE_MAX);
     heightPass.filter(*cloud);
+}
+
+// Is vegetation point
+bool Preprocessor::IsPointVegetationPoint(const PointDefaultType& point)
+{
+    // calculate TGI
+    Eigen::Vector3i rgb = point.getRGBVector3i();
+    float intensity = rgb[1] - 0.39f * rgb[0] - 0.61f * rgb[2];
+    return (intensity >= Preprocessor::TGI_THRESHOLD_VALUE_MIN && intensity <= Preprocessor::TGI_THRESHOLD_VALUE_MAX);
 }
 
 // Remove noise from the cloud

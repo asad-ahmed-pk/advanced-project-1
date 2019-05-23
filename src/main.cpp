@@ -71,10 +71,12 @@ int main(int argc, char** argv)
     std::cout << std::endl;
 
     // create new point cloud from the RGB vegetation indices
+    /*
     std::cout << "Calculating Vegetation Indices" << std::endl;;
     //pcl::PointCloud<PointDefaultType>::Ptr result(new pcl::PointCloud<PointDefaultType>);
     Preprocessor preprocessor;
     preprocessor.ProcessPointCloud(cloud, VegetationIndex::TGI, cloud);
+    */
 
     // segment the cloud
     Segmenter segmenter;

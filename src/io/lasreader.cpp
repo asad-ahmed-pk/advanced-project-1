@@ -9,6 +9,8 @@
 #include "lasreader.h"
 #include "liblas/liblas.hpp"
 
+#include "../pre_processing/preprocessor.h"
+
 // Constructor
 LASReader::LASReader(int numThreads, pcl::PointCloud<PointDefaultType>::Ptr cloud) : m_NumberOfThreads(numThreads), m_PointCloud(cloud)
 {
@@ -34,7 +36,7 @@ bool LASReader::ReadLASPointCloud(const std::string &lasFilePath)
     std::cout << "\nNumber of points in LAS file: " << pointCount << std::endl;
 
     // setup point cloud to have the required number of points
-    m_PointCloud->resize(pointCount);
+    //m_PointCloud->resize(pointCount);
 
     // create required number of threads and assign each its range to process
     std::vector<std::thread> threads;
@@ -61,7 +63,7 @@ bool LASReader::ReadLASPointCloud(const std::string &lasFilePath)
     std::chrono::duration<double> elapsed = end - start;
 
     std::cout << "\n\nAll LAS reader threads finished reading the file.\n";
-    std::cout << "\nTotal Time: " << elapsed.count() << std::endl;
+    std::cout << "\nTotal Time: " << std::chrono::duration_cast<std::chrono::minutes>(elapsed).count() << " minutes" std::endl;
     std::cout.flush();
 
     return true;
@@ -91,9 +93,13 @@ void LASReader::ProcessFileTask(unsigned long start, unsigned long end, const ch
 
         index = start + readCount;
 
-        m_Mutex.lock();
-        m_PointCloud->points[index] = point;
-        m_Mutex.unlock();
+        // only add if vegetation point
+        if (Preprocessor::IsPointVegetationPoint(point)) {
+            m_Mutex.lock();
+            m_PointCloud->push_back(point);
+            //m_PointCloud->points[index] = point;
+            m_Mutex.unlock();
+        }
 
         readCount++;
     }
