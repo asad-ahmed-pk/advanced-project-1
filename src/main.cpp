@@ -93,12 +93,12 @@ int main(int argc, char** argv)
     std::cout << " (" << (static_cast<double>(downsampledCloudPointCount) / static_cast<double>(originalPointCount)) * 100 << "% size)";
     std::cout << std::endl;
 
-
     // segment the cloud
     Segmenter segmenter;
     pcl::PointCloud<PointDefaultType>::Ptr segmentedCloud(new pcl::PointCloud<PointDefaultType>);
-    std::cout << "Segmenting Point Cloud" << std::endl;
+    std::cout << "\nSegmenting Point Cloud" << std::endl;
     segmenter.SegementPointCloudByColor(cloud, cloud);
+    std::cout << "\nPoint cloud segmented successfully" << std::endl;
 
     // Write the segmented cloud to disk
     std::cout << "\nWriting segmented cloud to disk...";
