@@ -18,6 +18,7 @@ enum VegetationIndex {
 class Preprocessor
 {
 public:
+    // Default constructor
     Preprocessor();
 
     // Process the point cloud with the given vegetation index type
@@ -25,6 +26,9 @@ public:
 
     // Returns true if the point is a vegetation point based on the TGI index.
     static bool IsPointVegetationPoint(const PointDefaultType& point);
+
+    // Downsample the given point-cloud (in-place)
+    static void DownsampleCloud(pcl::PointCloud<PointDefaultType>::Ptr& cloud);
 
 private:
     void FilterOutNonVegetation(pcl::PointCloud<pcl::PointXYZI>::Ptr& cloud, VegetationIndex indexType, std::vector<uint32_t>& removedIndices) const;

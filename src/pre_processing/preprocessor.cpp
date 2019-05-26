@@ -5,6 +5,7 @@
 #include "pcl/filters/passthrough.h"
 #include "pcl/filters/statistical_outlier_removal.h"
 #include "pcl/filters/extract_indices.h"
+#include "pcl/filters/uniform_sampling.h"
 
 #include "Eigen/Eigen"
 
@@ -140,5 +141,16 @@ void Preprocessor::RemoveNoise(const pcl::PointCloud<pcl::PointXYZI>::Ptr &cloud
     sor.setStddevMulThresh(2.0);
 
     sor.filter(*cloud);
+}
+
+// Downsample
+void Preprocessor::DownsampleCloud(pcl::PointCloud<PointDefaultType>::Ptr& cloud)
+{
+    const double RADIUS { 0.01 };
+
+    pcl::UniformSampling<PointDefaultType> ufs;
+    ufs.setInputCloud(cloud);
+    ufs.setRadiusSearch(RADIUS);
+    ufs.filter(*cloud);
 }
 

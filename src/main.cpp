@@ -63,11 +63,13 @@ int main(int argc, char** argv)
     LASReader lasReader(numThreadsForLasReader, cloud);
     lasReader.ReadLASPointCloud(inputPointCloudFilePath);
 
+    unsigned int originalPointCount = cloud->width * cloud->height;
+
     // print basic stats on point cloud file
     std::cout << "\n\nPoint Cloud Data Loaded";
     std::cout << "\nWidth: " << cloud->width;
     std::cout << "\nHeight: " << cloud->height;
-    std::cout << "\nTotal Number of Points: " << cloud->width * cloud->height;
+    std::cout << "\nTotal Number of Points: " << originalPointCount;
     std::cout << std::endl;
 
     // create new point cloud from the RGB vegetation indices
@@ -77,6 +79,20 @@ int main(int argc, char** argv)
     Preprocessor preprocessor;
     preprocessor.ProcessPointCloud(cloud, VegetationIndex::TGI, cloud);
     */
+
+    // down-sample point cloud
+    std::cout << "\nDownsampling point cloud... \n";
+    std::cout.flush();
+
+    Preprocessor::DownsampleCloud(cloud);
+
+    unsigned int downsampledCloudPointCount = cloud->width * cloud->height;
+
+    std::cout << "Point cloud downsampled successfully";
+    std::cout << "\nNumber of points after downsample: " << downsampledCloudPointCount;
+    std::cout << " (" << (static_cast<double>(downsampledCloudPointCount) / static_cast<double>(originalPointCount)) * 100 << "% size)";
+    std::cout << std::endl;
+
 
     // segment the cloud
     Segmenter segmenter;
