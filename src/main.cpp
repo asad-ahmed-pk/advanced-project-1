@@ -4,8 +4,10 @@
 #include <iostream>
 #include <string>
 #include <chrono>
+#include <boost/filesystem.hpp>
 
 #include "pcl/io/pcd_io.h"
+#include "pcl/io/ply_io.h"
 #include "pcl/point_types.h"
 #include "pcl/common/io.h"
 #include "pcl/search/search.h"
@@ -26,6 +28,10 @@
 
 const std::string FILE_PATH { "../../data/jacobs_campus.pcd" };
 const std::string SEGMENT_CLOUD_FILE_PATH { "../../data/segmented_cloud.pcd" };
+
+const std::string FILE_EXT_PCD { ".pcd" };
+const std::string FILE_EXT_LAS { ".las" };
+const std::string FILE_EXT_PLY { ".ply" };
 
 int main(int argc, char** argv)
 {
@@ -48,20 +54,35 @@ int main(int argc, char** argv)
         numThreadsForLasReader = atoi(argv[2]);
     }
 
-    // read in point cloud data from file
     pcl::PointCloud<PointDefaultType>::Ptr cloud(new pcl::PointCloud<PointDefaultType>);
-    /*
-    if (pcl::io::loadPCDFile<PointDefaultType>(inputPointCloudFilePath, *cloud) == -1) {
-        PCL_ERROR("Could not read point cloud file");
+
+    // read in point cloud data from file depending on extension
+    boost::filesystem::path path(inputPointCloudFilePath);
+    std::string extension = path.extension().string();
+
+    if (extension == FILE_EXT_LAS) {
+        std::cout << "\nReading LAS point cloud file..." << std::endl;
+        LASReader lasReader(numThreadsForLasReader, cloud);
+        lasReader.ReadLASPointCloud(inputPointCloudFilePath);
+    }
+    else if (extension == FILE_EXT_PCD) {
+        std::cout << "\nReading PCD point cloud file... " << std::endl;
+        if (pcl::io::loadPCDFile<PointDefaultType>(inputPointCloudFilePath, *cloud) == -1) {
+            PCL_ERROR("Could not read point cloud file");
+            return -1;
+        }
+    }
+    else if (extension == FILE_EXT_PLY) {
+        std::cout << "\nReading PLY point cloud file..." << std::endl;
+        if (pcl::io::loadPLYFile<PointDefaultType>(inputPointCloudFilePath, *cloud) == -1) {
+            PCL_ERROR("Cound not read point cloud file");
+            return -1;
+        }
+    }
+    else {
+        std::cerr << "\nERROR: Unknown file extension: " << extension << std::endl;
         return -1;
     }
-    */
-
-    // read in las point cloud
-    std::cout << "\nReading LAS point cloud file..." << std::endl;
-
-    LASReader lasReader(numThreadsForLasReader, cloud);
-    lasReader.ReadLASPointCloud(inputPointCloudFilePath);
 
     unsigned int originalPointCount = cloud->width * cloud->height;
 
@@ -81,6 +102,7 @@ int main(int argc, char** argv)
     */
 
     // down-sample point cloud
+    /*
     std::cout << "\nDownsampling point cloud... \n";
     std::cout.flush();
 
@@ -92,6 +114,7 @@ int main(int argc, char** argv)
     std::cout << "\nNumber of points after downsample: " << downsampledCloudPointCount;
     std::cout << " (" << (static_cast<double>(downsampledCloudPointCount) / static_cast<double>(originalPointCount)) * 100 << "% size)";
     std::cout << std::endl;
+    */
 
     // segment the cloud
     Segmenter segmenter;
@@ -106,13 +129,6 @@ int main(int argc, char** argv)
     std::cout << "\nSegmented cloud written to disk";
     std::cout.flush();
 
-    // visualize the resultant cloud
-    /*
-    std::cout << "\n\nVisualising Result Point Cloud" << std::endl;
-    PointCloudRenderer renderer(cloud);
-    renderer.Render();
-    */
-
     // record end execution time and elapsed time
     std::chrono::high_resolution_clock::time_point endTime = std::chrono::high_resolution_clock::now();
 
@@ -120,6 +136,11 @@ int main(int argc, char** argv)
     std::cout << "Final point cloud written to: " << SEGMENT_CLOUD_FILE_PATH << std::endl;
     std::cout << "\n\nTotal Processing Time: " << std::chrono::duration_cast<std::chrono::minutes>(endTime - startTime).count() << " minutes" << std::endl;
     std::cout << std::endl;
+
+    // visualize the resultant cloud
+    std::cout << "\n\nVisualising Result Point Cloud" << std::endl;
+    PointCloudRenderer renderer(cloud);
+    renderer.Render();
 
     return 0;
 }
