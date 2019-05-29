@@ -146,6 +146,18 @@ void Preprocessor::RemoveNoise(const pcl::PointCloud<pcl::PointXYZI>::Ptr &cloud
 // Downsample
 void Preprocessor::DownsampleCloud(pcl::PointCloud<PointDefaultType>::Ptr& cloud)
 {
+    // remove ground points
+    pcl::PassThrough<PointDefaultType> heightPass;
+    
+    const float HEIGHT_FILTER_VALUE_MIN { 5.0f };
+    const float HEIGHT_FILTER_VALUE_MAX { 100.0f };
+
+    heightPass.setInputCloud(cloud);
+    heightPass.setFilterFieldName("z");
+    heightPass.setFilterLimits(HEIGHT_FILTER_VALUE_MIN, HEIGHT_FILTER_VALUE_MAX);
+    heightPass.filter(*cloud);
+    
+    // downsample
     const double RADIUS { 0.01 };
 
     pcl::UniformSampling<PointDefaultType> ufs;

@@ -18,6 +18,9 @@ public:
 
     // Segment the given cloud using colour
     void SegementPointCloudByColor(const pcl::PointCloud<PointDefaultType>::Ptr cloud, pcl::PointCloud<PointDefaultType>::Ptr& result) const;
+    
+    // GPU colour based segmentation
+    void SegmentWithGPU(const pcl::PointCloud<PointDefaultType>::Ptr& cloud, pcl::PointCloud<PointDefaultType>::Ptr& result) const;
 
 private:
     void ComputeNormals(pcl::PointCloud<pcl::PointXYZI>::Ptr& cloud, pcl::PointCloud<pcl::Normal>::Ptr& normals) const;

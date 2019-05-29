@@ -6,7 +6,7 @@ project(PointCloudTreeClassifier)
 set(CMAKE_CXX_STANDARD 11)
 
 # PCL
-find_package(PCL 1.3 REQUIRED COMPONENTS common io visualization search filters segmentation keypoints features)
+find_package(PCL 1.3 REQUIRED COMPONENTS common io visualization search filters segmentation keypoints features gpu)
 include_directories(${PCL_INCLUDE_DIRS})
 link_directories(${PCL_LIBRARY_DIRS})
 add_definitions(${PCL_DEFINITIONS})

@@ -16,7 +16,7 @@ int main(int argc, char** argv)
 {
     // command line args downsample_las_cloud [input las file] [output las file]
     if (argc < 3) {
-        std::cout << "\nUsage: downsample_las_cloud [input las file] [output las file]";
+        std::cout << "\nUsage: downsample_las_cloud [input las file] [output pcd file]";
         std::cout << std::endl;
         return 0;
     }

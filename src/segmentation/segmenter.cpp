@@ -7,6 +7,7 @@
 #include "pcl/search/kdtree.h"
 #include "pcl/segmentation/region_growing.h"
 #include "pcl/segmentation/region_growing_rgb.h"
+//#include "pcl/gpu/segmentation/gpu_seeded_hue_segmentation.h"
 
 #include <vector>
 
@@ -66,6 +67,12 @@ void Segmenter::SegementPointCloudByColor(const pcl::PointCloud<PointDefaultType
     //pcl::io::savePCDFile(outputFilePath, *coloredCloud, false);
 
     result = reg.getColoredCloud();
+}
+
+// GPU segmentation
+void Segmenter::SegmentWithGPU(const pcl::PointCloud<PointDefaultType>::Ptr& cloud, pcl::PointCloud<PointDefaultType>::Ptr& result) const
+{
+    
 }
 
 // Compute normals
