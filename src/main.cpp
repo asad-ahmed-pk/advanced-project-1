@@ -1,6 +1,19 @@
 // main.cpp
 // Point Cloud Tree Classifier
 
+/**
+  Point Cloud Tree Classifier
+  Advanced Project I
+  Asad Ahmed
+  Jacobs University Bremen
+
+  This program was developed for the Advanced Project I Module of Jacobs University (MSc Data Engineering) Programme.
+  It reads in the given point cloud file (3 formats: PCD, LAS, and PLY) and filters the cloud using the vegetation index (TGI)
+  The resulting cloud is segmented
+
+  Included as part of the submission (with accompanying report) for the module in Semester 2.
+**/
+
 #include <iostream>
 #include <string>
 #include <chrono>
@@ -22,7 +35,6 @@
 #include "type_defs.h"
 #include "io/lasreader.h"
 #include "visualisation/point_cloud_renderer.h"
-#include "classification/classifier.h"
 #include "pre_processing/preprocessor.h"
 #include "segmentation/segmenter.h"
 
@@ -93,16 +105,7 @@ int main(int argc, char** argv)
     std::cout << "\nTotal Number of Points: " << originalPointCount;
     std::cout << std::endl;
 
-    // create new point cloud from the RGB vegetation indices
-    /*
-    std::cout << "Calculating Vegetation Indices" << std::endl;;
-    //pcl::PointCloud<PointDefaultType>::Ptr result(new pcl::PointCloud<PointDefaultType>);
-    Preprocessor preprocessor;
-    preprocessor.ProcessPointCloud(cloud, VegetationIndex::TGI, cloud);
-    */
-
     // down-sample point cloud
-    /*
     std::cout << "\nDownsampling point cloud... \n";
     std::cout.flush();
 
@@ -114,7 +117,11 @@ int main(int argc, char** argv)
     std::cout << "\nNumber of points after downsample: " << downsampledCloudPointCount;
     std::cout << " (" << (static_cast<double>(downsampledCloudPointCount) / static_cast<double>(originalPointCount)) * 100 << "% size)";
     std::cout << std::endl;
-    */
+
+    // create new point cloud from the RGB vegetation indices    
+    std::cout << "Calculating Vegetation Indices" << std::endl;;
+    Preprocessor preprocessor;
+    preprocessor.ProcessPointCloud(cloud, VegetationIndex::TGI, cloud);
 
     // segment the cloud
     Segmenter segmenter;

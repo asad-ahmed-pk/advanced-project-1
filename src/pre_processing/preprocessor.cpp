@@ -1,7 +1,9 @@
 // preprocessor.cpp
 
 #include "preprocessor.h"
+#include "../visualisation/point_cloud_renderer.h"
 
+#include "pcl/io/pcd_io.h"
 #include "pcl/filters/passthrough.h"
 #include "pcl/filters/statistical_outlier_removal.h"
 #include "pcl/filters/extract_indices.h"
@@ -66,6 +68,12 @@ void Preprocessor::ProcessPointCloud(const pcl::PointCloud<PointDefaultType>::Pt
     std::cout << "\nMin Intensity: " << *std::min_element(intensities.begin(), intensities.end());
     std::cout << "\nAverage Intensity: " << std::accumulate(intensities.begin(), intensities.end(), 0.0f) / intensities.size();
     std::cout << std::endl;
+
+    // write to disk
+    //pcl::io::savePCDFile("../../data/tgi_cloud.pcd", *vegetationIndexedCloud, true);
+
+    PointCloudRenderer renderer(vegetationIndexedCloud);
+    renderer.Render();
 
     // filter out non-vegetation and remove noise
     std::vector<uint32_t> removedIndices;

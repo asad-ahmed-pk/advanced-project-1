@@ -20,7 +20,6 @@ list(APPEND PROJECT_SOURCES
         src/main.cpp
         src/visualisation/point_cloud_renderer.cpp
         src/segmentation/segmenter.cpp
-        src/classification/classifier.cpp
         src/pre_processing/preprocessor.cpp
         src/io/lasreader.cpp
 )
@@ -32,7 +31,7 @@ set(LIBLAS_LIB_PATH_MAC "${LIBLAS_BUILD_OUTPUT_DIRECTORY}/liblas.dylib" "${LIBLA
 set(LIBLAS_LIB_PATH_LINUX "${LIBLAS_BUILD_OUTPUT_DIRECTORY}/liblas.so" "${LIBLAS_BUILD_OUTPUT_DIRECTORY}/liblas_c.so")
 
 # tools - downsampler
-add_executable(downsample_las_cloud "src/tools/downsample_las_cloud.cpp" "src/pre_processing/preprocessor.cpp" "src/io/lasreader.cpp")
+add_executable(downsample_las_cloud "src/tools/downsample_las_cloud.cpp" "src/pre_processing/preprocessor.cpp" "src/io/lasreader.cpp" "src/visualisation/point_cloud_renderer.cpp")
 
 # main executable
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCES})
